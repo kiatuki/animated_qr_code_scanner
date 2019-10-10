@@ -174,3 +174,5 @@ QR Detector still detects barcode even with intent changed
 Compute the QR corners in native-layer instead of in Flutter-layer
 
 Implementation for iOS
+
+Animation for front camera is incorrect
