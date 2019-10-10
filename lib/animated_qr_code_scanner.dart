@@ -153,17 +153,21 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
                 FutureBuilder(
                   future: viewFinderSize.future,
                   builder: (context,snapshot) => snapshot.hasData
-                    ? AnimatedSquare(
-                      widgetSize: snapshot.data,
-                      padding: MediaQuery.of(context).padding,
-                      key: animatedKey,
-                      width: Math.min<double>(snapshot.data.height,snapshot.data.width)*0.8,
-                      height: Math.min<double>(snapshot.data.height,snapshot.data.width)*0.8,
-                      onScan: widget.onScan,
-                      animationDuration: widget.animationDuration,
-                      squareBorderColor: widget.squareBorderColor,
-                      squareColor : widget.squareColor,
-                      borderWidth: widget.borderWidth,
+                    ? SizedBox(
+                      width: snapshot.data.width,
+                      height: snapshot.data.height,
+                      child: AnimatedSquare(
+                        widgetSize: snapshot.data,
+                        padding: MediaQuery.of(context).padding,
+                        key: animatedKey,
+                        width: Math.min<double>(snapshot.data.height,snapshot.data.width)*0.8,
+                        height: Math.min<double>(snapshot.data.height,snapshot.data.width)*0.8,
+                        onScan: widget.onScan,
+                        animationDuration: widget.animationDuration,
+                        squareBorderColor: widget.squareBorderColor,
+                        squareColor : widget.squareColor,
+                        borderWidth: widget.borderWidth,
+                      ),
                     )
                     : const SizedBox.shrink()
                 ),
