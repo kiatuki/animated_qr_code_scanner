@@ -269,18 +269,26 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
         Size _viewFinderSize = await viewFinderSize.future; 
 
-        Offset centerCroppedSize = Offset(scaledSize.width,_viewFinderSize.height/_viewFinderSize.width*scaledSize.width);
+        Size centerCroppedSize = previewSize.width/previewSize.height < _viewFinderSize.width/_viewFinderSize.height
+          ? Size(
+            scaledSize.width,
+            _viewFinderSize.height/_viewFinderSize.width*scaledSize.width,
+          )
+          : Size(
+            _viewFinderSize.width/_viewFinderSize.height*scaledSize.height,
+            scaledSize.height,
+          );
 
         List<Offset> qrCornerCenterCropped = [
           for(int i=0;i<qrCornerScaled.length;i++)Offset(
-            qrCornerScaled[i].dx,
-            qrCornerScaled[i].dy-(scaledSize.height-centerCroppedSize.dy)/2,
+            qrCornerScaled[i].dx-(scaledSize.width-centerCroppedSize.width)/2,
+            qrCornerScaled[i].dy-(scaledSize.height-centerCroppedSize.height)/2,
           )
         ];
 
         Offset previewToFlutterRatio = Offset(
-          _viewFinderSize.width/centerCroppedSize.dx,
-          _viewFinderSize.height/centerCroppedSize.dy
+          _viewFinderSize.width/centerCroppedSize.width,
+          _viewFinderSize.height/centerCroppedSize.height,
         );
 
         qrCornerFlutter = [
