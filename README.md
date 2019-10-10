@@ -6,7 +6,7 @@ This work is based on Julius Canute's [qr_code_scanner](https://pub.dev/packages
 
 A decorative square is displayed on the middle of the view until a QR code is detected, which will be animated to the location of the QR code to highlight it. Decoded text is passed to callback function when a QR is detected at the beginning and/or the end of highlight animation.
 
-The exact location of the detected code on the Flutter's display is calculated with Detector and Perspective Transform from zxing which are ported to Flutter.
+The location of the detected code on the Flutter's display is calculated again with Detector and Perspective Transform from zxing which are ported to Flutter.
 
 A controller can also store the text, and provides basic controls such as turning on flashlight and restarting the scan.
 
