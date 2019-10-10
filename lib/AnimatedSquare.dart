@@ -58,7 +58,7 @@ class AnimatedSquareState extends State<AnimatedSquare>
       }).toList();
     });
     controller.forward().whenComplete(
-      () => widget.onScan(scanResult));
+      () => widget?.onScan(scanResult));
     
   }
 
