@@ -49,21 +49,23 @@ class TestPage extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => Scaffold(
-                              body: Align(
-                                alignment: Alignment.center,
-                                child: Text("$str"),
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => Scaffold(
+                                body: Align(
+                                  alignment: Alignment.center,
+                                  child: Text("$str"),
+                                ),
                               ),
                             ),
-                          ));
+                          );
                         },
                       ),
                       FlatButton(
                         child: Text('Rescan'),
                         onPressed: () {
                           Navigator.of(context).pop();
-                          controller.resumeCamera();
+                          controller.resume();
                         },
                       ),
                     ],
