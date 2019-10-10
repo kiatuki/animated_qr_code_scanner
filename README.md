@@ -1,6 +1,6 @@
 # Animated QR Code Scanner
 
-A QR code scanner Widget that currently works on Android only by natively embedding the platform view within Flutter.
+A QR code scanner Widget that currently works on **Android only** (feel free to make pull request on iOS implementation) by natively embedding the platform view within Flutter.
 
 This work is based on Julius Canute's [qr_code_scanner](https://pub.dev/packages/qr_code_scanner) Flutter package.
 
