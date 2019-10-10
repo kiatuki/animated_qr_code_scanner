@@ -14,7 +14,7 @@ It is also possible to style the targetting box to an extent.
 
 ## Demo
 
-Coming Soon
+![Animation Demo](https://raw.githubusercontent.com/kiatuki/animated_qr_code_scanner/master/docs/images/demo.gif)
 
 ## Example
 
