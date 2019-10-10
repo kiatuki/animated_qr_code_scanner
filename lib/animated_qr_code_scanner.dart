@@ -185,7 +185,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
       animatedKey.currentState.setScanResult(scannedString);
       setState(() {
         qrText = scannedString;
-        widget.onScanBeforeAnimation(scannedString);
+        widget?.onScanBeforeAnimation(scannedString);
       });
     });
 
