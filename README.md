@@ -2,7 +2,7 @@
 
 A QR code scanner Widget that currently works on Android only by natively embedding the platform view within Flutter.
 
-This work is based on [Julius Canute's qr_code_scanner](https://pub.dev/packages/qr_code_scanner) Flutter package.
+This work is based on Julius Canute's [qr_code_scanner](https://pub.dev/packages/qr_code_scanner) Flutter package.
 
 A decorative square is displayed on the middle of the view until a QR code is detected, which will be animated to the location of the QR code to highlight it. Decoded text is passed to callback function when a QR is detected at the beginning and/or the end of highlight animation.
 
@@ -10,11 +10,42 @@ The exact location of the detected code on the Flutter's display is calculated w
 
 A controller can also store the text, and provides basic controls such as turning on flashlight and restarting the scan.
 
-It is also possible to style the targetting box to an extent.
+It is also possible to style the targetting box.
 
 ## Demo
 
 ![Animation Demo](https://raw.githubusercontent.com/kiatuki/animated_qr_code_scanner/master/docs/images/demo.gif)
+## Installing
+
+Use this package as a library
+### 1. Depend on it
+Add this to your package's pubspec.yaml file:
+
+```dart
+dependencies:
+  animated_qr_code_scanner:
+    git:
+      url: https://github.com/kiatuki/animated_qr_code_scanner.git
+      ref: v0.1
+```
+
+### 2. Install it
+You can install packages from the command line:
+
+with Flutter:
+
+```dart
+$ flutter pub get
+```
+
+Alternatively, your editor might support flutter pub get. Check the docs for your editor to learn more.
+
+### 3. Import it
+Now in your Dart code, you can use:
+
+```dart
+import 'package:animated_qr_code_scanner/animated_qr_code_scanner.dart';
+```
 
 ## Example
 
@@ -139,5 +170,7 @@ AnimatedQRView(
 
 ## Todos
 QR Detector still detects barcode even with intent changed
+
 Compute the QR corners in native-layer instead of in Flutter-layer
+
 Implementation for iOS
