@@ -77,10 +77,18 @@ class BitMatrix {
     height = '\n'.allMatches(string).length
   {
     clear();
-    List<String> lstStr=string.split('\n');
-    for(int y=0;y<height;y++)
-      for(int x=0;x<width;x++)
-        lstStr[y][x]=='1'?set(x,y):unset(x,y);
+    for(int i=0,j=0;i<string.length;i++)
+    {
+      if(string[i]=='1'){
+        int x = j%width;
+        int y = j~/width;
+        set(x,y);
+        j++;
+      }
+      else if(string[i]=='0'){
+        j++;
+      }
+    }
   }
 
 }
