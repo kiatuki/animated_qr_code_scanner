@@ -25,7 +25,7 @@ class TestPage extends StatelessWidget {
           Expanded(
             child: AnimatedQRView(
               squareColor: Colors.green.withOpacity(0.25),
-              animationDuration: const Duration(milliseconds: 400),
+              animationDuration: const Duration(milliseconds: 600),
               onScanBeforeAnimation: (String str) {
                 print('Callback at the beginning of animation: $str');
               },
