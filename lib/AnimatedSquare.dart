@@ -47,6 +47,7 @@ class AnimatedSquareState extends State<AnimatedSquare>
     setState(() {
       to = newOffset;
       controller.stop();
+      controller.duration = widget.animationDuration ?? controller.duration;
       animations.forEach((c) => c.removeStatusListener(_statusListenerIdle));
       animations = newOffset.map((offset) {
         int i = newOffset.indexOf(offset);
@@ -78,6 +79,7 @@ class AnimatedSquareState extends State<AnimatedSquare>
     ];
     setState(() {
       controller.stop();
+      controller.duration = const Duration(milliseconds: 800);
       animations.forEach((c) => c.removeStatusListener(_statusListenerIdle));
       animations = newOffset.map((offset) {
         int i = newOffset.indexOf(offset);
@@ -118,7 +120,7 @@ class AnimatedSquareState extends State<AnimatedSquare>
       Offset(left, bottom)
     ];
 
-    controller = AnimationController(duration: widget.animationDuration ?? const Duration(milliseconds: 800), vsync: this);
+    controller = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
     curved = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
     animations = from.map((offset) {
       int i = from.indexOf(offset);
