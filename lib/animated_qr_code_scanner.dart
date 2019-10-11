@@ -99,8 +99,8 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
   /// This detector only re-evaluate the image to determine the corners of the QR code.
   final Detector detector = Detector();
 
-  /// Completes the size of the viewfinder (the image displayed to user)
-  Completer<Size> viewFinderSize = new Completer<Size>();
+  /// Size of the image displayed to user
+  Size viewFinderSize;
 
   /// Internal controller used in case widget.controller is not provided
   QRViewController _controller;
@@ -125,54 +125,49 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
   @override
   void initState() {
     previewMirrored = cameraState != _CameraState.front_camera;
-
-    // Determine the viewfinder size after viewfinder has been rendered
-    Future.delayed(Duration(milliseconds: 800),() {
-        viewFinderSize.complete(Size(
-          (parentQrKey.currentContext.findRenderObject() as RenderBox).size.width,
-          (parentQrKey.currentContext.findRenderObject() as RenderBox).size.height - MediaQuery.of(context).padding.top
-        ));
-        setState(() {});
-    });
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
+        Size widgetSize = (parentQrKey.currentContext.findRenderObject() as RenderBox).size;
+        viewFinderSize=Size(
+            widgetSize.width,
+            widgetSize.height - MediaQuery.of(context).padding.top,
+        );
+      })
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     previewMirrored = cameraState != _CameraState.front_camera;
 
-    return 
-          Container(
-            key: parentQrKey,
-            child: Stack(
-              children: <Widget>[
-                QRView(
-                  key: qrKey,
-                  onQRViewCreated: _onQRViewCreated,        
+    return Container(
+      key: parentQrKey,
+      child: viewFinderSize != null
+          ? Stack(
+            children: <Widget>[
+              QRView(
+                key: qrKey,
+                onQRViewCreated: _onQRViewCreated,
+              ),
+              SizedBox(
+                width: viewFinderSize.width,
+                height: viewFinderSize.height,
+                child: AnimatedSquare(
+                  widgetSize: viewFinderSize,
+                  padding: MediaQuery.of(context).padding,
+                  key: animatedKey,
+                  width: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
+                  height: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
+                  onScan: widget.onScan,
+                  animationDuration: widget.animationDuration,
+                  squareBorderColor: widget.squareBorderColor,
+                  squareColor : widget.squareColor,
+                  borderWidth: widget.borderWidth,
                 ),
-                FutureBuilder(
-                  future: viewFinderSize.future,
-                  builder: (context,snapshot) => snapshot.hasData
-                    ? SizedBox(
-                      width: snapshot.data.width,
-                      height: snapshot.data.height,
-                      child: AnimatedSquare(
-                        widgetSize: snapshot.data,
-                        padding: MediaQuery.of(context).padding,
-                        key: animatedKey,
-                        width: Math.min<double>(snapshot.data.height,snapshot.data.width)*0.8,
-                        height: Math.min<double>(snapshot.data.height,snapshot.data.width)*0.8,
-                        onScan: widget.onScan,
-                        animationDuration: widget.animationDuration,
-                        squareBorderColor: widget.squareBorderColor,
-                        squareColor : widget.squareColor,
-                        borderWidth: widget.borderWidth,
-                      ),
-                    )
-                    : const SizedBox.shrink()
-                ),
-              ],
-            ),
+              )
+            ],
+          )
+          : const SizedBox.expand(),
     );
   }
 
@@ -267,15 +262,13 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
           )
         ];
 
-        Size _viewFinderSize = await viewFinderSize.future; 
-
-        Size centerCroppedSize = previewSize.width/previewSize.height < _viewFinderSize.width/_viewFinderSize.height
+        Size centerCroppedSize = previewSize.width/previewSize.height < viewFinderSize.width/viewFinderSize.height
           ? Size(
             scaledSize.width,
-            _viewFinderSize.height/_viewFinderSize.width*scaledSize.width,
+            viewFinderSize.height/viewFinderSize.width*scaledSize.width,
           )
           : Size(
-            _viewFinderSize.width/_viewFinderSize.height*scaledSize.height,
+            viewFinderSize.width/viewFinderSize.height*scaledSize.height,
             scaledSize.height,
           );
 
@@ -287,8 +280,8 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
         ];
 
         Offset previewToFlutterRatio = Offset(
-          _viewFinderSize.width/centerCroppedSize.width,
-          _viewFinderSize.height/centerCroppedSize.height,
+          viewFinderSize.width/centerCroppedSize.width,
+          viewFinderSize.height/centerCroppedSize.height,
         );
 
         qrCornerFlutter = [
