@@ -166,7 +166,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
                   squareColor : widget.squareColor,
                   borderWidth: widget.borderWidth,
                 ),
-              )
+              ),
             ],
           )
           // Show nothing if we don't know widget size yet. Widget size will be gotten after this has been rendered
@@ -224,80 +224,9 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
     controller.bitMatrixStream.listen((binarizedCroppedImage) async {
       detector.bitMatrix = BitMatrix.fromString(binarizedCroppedImage);
-
-      PerspectiveTransform transform = detector.createTransform(
-          resultPointsPreviewFramingRect[1],
-          resultPointsPreviewFramingRect[2],
-          resultPointsPreviewFramingRect[0],
-          resultPointsPreviewFramingRect.length >= 4 ? resultPointsPreviewFramingRect[3] : null);
-
-      qrCornersPreviewFramingRect = transform.transformPointsFromOffset([
-        Offset(0, 0),
-        Offset(detector.computedDimension.toDouble(), 0),
-        Offset(detector.computedDimension.toDouble(), detector.computedDimension.toDouble()),
-        Offset(0, detector.computedDimension.toDouble()),
-      ]);
-
-        Offset translateResultPointFramingRectToPreview(Offset point) {
-          double x = point.dx + this.previewFramingRect.left;
-          double y = point.dy + this.previewFramingRect.top;
-          if (previewMirrored) {
-            x = previewSize.width/2 - x;
-          }
-          return new Offset(x, y);
-        }
-
-        qrCornersPreview = [
-          for (int i = 0; i < qrCornersPreviewFramingRect.length; i++)
-            translateResultPointFramingRectToPreview(
-              Offset(qrCornersPreviewFramingRect[i].dx, qrCornersPreviewFramingRect[i].dy)
-            )
-        ];
-
-        Size scaledSize = Size(viewfinderRect.right-viewfinderRect.left,viewfinderRect.bottom-viewfinderRect.top);
-        Offset previewCenter = Offset(previewSize.width/2,previewSize.height/2);
-        Offset scaledCenter = Offset(scaledSize.width/2,scaledSize.height/2);
-
-        List<Offset> qrCornerScaled = [
-          for(int i=0;i<qrCornersPreview.length;i++) Offset(
-            ((qrCornersPreview[i].dx-previewCenter.dx)*scaledSize.width/previewSize.width)+scaledCenter.dx,
-            ((qrCornersPreview[i].dy-previewCenter.dy)*scaledSize.height/previewSize.height)+scaledCenter.dy,
-          )
-        ];
-
-        Size centerCroppedSize = previewSize.width/previewSize.height < viewFinderSize.width/viewFinderSize.height
-          ? Size(
-            scaledSize.width,
-            viewFinderSize.height/viewFinderSize.width*scaledSize.width,
-          )
-          : Size(
-            viewFinderSize.width/viewFinderSize.height*scaledSize.height,
-            scaledSize.height,
-          );
-
-        List<Offset> qrCornerCenterCropped = [
-          for(int i=0;i<qrCornerScaled.length;i++)Offset(
-            qrCornerScaled[i].dx-(scaledSize.width-centerCroppedSize.width)/2,
-            qrCornerScaled[i].dy-(scaledSize.height-centerCroppedSize.height)/2,
-          )
-        ];
-
-        Offset previewToFlutterRatio = Offset(
-          viewFinderSize.width/centerCroppedSize.width,
-          viewFinderSize.height/centerCroppedSize.height,
-        );
-
-        qrCornerFlutter = [
-          for(int i=0;i<qrCornerCenterCropped.length;i++)
-          Offset(
-            qrCornerCenterCropped[i].dx * previewToFlutterRatio.dx,
-            qrCornerCenterCropped[i].dy * previewToFlutterRatio.dy + MediaQuery.of(context).padding.top,
-          )
-        ];
-
-        animatedKey.currentState.changeToOffset(qrCornerFlutter);
-
+      startHighlightQR();
     });
+
     controller.animatedSquareStream.listen((strCommand) async {
       if(strCommand == "flip" || strCommand == "resume") {
         animatedKey.currentState.onRescan();
@@ -305,6 +234,84 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
       }
       if(strCommand == "pause") animatedKey.currentState.controller.stop();
     });
+  }
+
+  /// Function to calculate the QR's coordinate in flutter and start animating the square to highlight it
+  /// Called this function only after [resultPointsPreviewFramingRect], [viewfinderRect], [previewFramingRect],
+  /// [previewSize], and [detector.bitMatrix] is known
+  void startHighlightQR()
+  {
+    PerspectiveTransform transform = detector.createTransform(
+      resultPointsPreviewFramingRect[1],
+      resultPointsPreviewFramingRect[2],
+      resultPointsPreviewFramingRect[0],
+      resultPointsPreviewFramingRect.length >= 4 ? resultPointsPreviewFramingRect[3] : null);
+
+    qrCornersPreviewFramingRect = transform.transformPointsFromOffset([
+      Offset(0, 0),
+      Offset(detector.computedDimension.toDouble(), 0),
+      Offset(detector.computedDimension.toDouble(), detector.computedDimension.toDouble()),
+      Offset(0, detector.computedDimension.toDouble()),
+    ]);
+    
+    Offset translateResultPointFramingRectToPreview(Offset point) {
+      double x = point.dx + this.previewFramingRect.left;
+      double y = point.dy + this.previewFramingRect.top;
+      if (previewMirrored) {
+        x = previewSize.width/2 - x; // TODO: incorrect
+      }
+      return new Offset(x, y);
+    }
+
+    qrCornersPreview = [
+      for (int i = 0; i < qrCornersPreviewFramingRect.length; i++)
+        translateResultPointFramingRectToPreview(
+          Offset(qrCornersPreviewFramingRect[i].dx, qrCornersPreviewFramingRect[i].dy)
+        )
+    ];
+
+    Size scaledSize = Size(viewfinderRect.right-viewfinderRect.left,viewfinderRect.bottom-viewfinderRect.top);
+    Offset previewCenter = Offset(previewSize.width/2,previewSize.height/2);
+    Offset scaledCenter = Offset(scaledSize.width/2,scaledSize.height/2);
+
+    List<Offset> qrCornerScaled = [
+      for(int i = 0; i < qrCornersPreview.length; i++) Offset(
+        ((qrCornersPreview[i].dx-previewCenter.dx)*scaledSize.width/previewSize.width)+scaledCenter.dx,
+        ((qrCornersPreview[i].dy-previewCenter.dy)*scaledSize.height/previewSize.height)+scaledCenter.dy,
+      )
+    ];
+
+    Size centerCroppedSize =
+      previewSize.width/previewSize.height < viewFinderSize.width/viewFinderSize.height
+        ? Size(
+          scaledSize.width,
+          viewFinderSize.height/viewFinderSize.width*scaledSize.width,
+        )
+        : Size(
+          viewFinderSize.width/viewFinderSize.height*scaledSize.height,
+          scaledSize.height,
+        );
+
+    List<Offset> qrCornerCenterCropped = [
+      for(int i=0; i < qrCornerScaled.length; i++) Offset(
+        qrCornerScaled[i].dx-(scaledSize.width-centerCroppedSize.width)/2,
+        qrCornerScaled[i].dy-(scaledSize.height-centerCroppedSize.height)/2,
+      )
+    ];
+
+    Offset previewToFlutterRatio = Offset(
+      viewFinderSize.width/centerCroppedSize.width,
+      viewFinderSize.height/centerCroppedSize.height,
+    );
+
+    qrCornerFlutter = [
+      for(int i = 0; i < qrCornerCenterCropped.length; i++) Offset(
+        qrCornerCenterCropped[i].dx * previewToFlutterRatio.dx,
+        qrCornerCenterCropped[i].dy * previewToFlutterRatio.dy + MediaQuery.of(context).padding.top,
+      )
+    ];
+
+    animatedKey.currentState.changeToOffset(qrCornerFlutter);
   }
 
   @override
@@ -315,26 +322,16 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 }
 
 List<Offset> _parseListPoint(String str) {
-  str = str.replaceAll('[', '');
-  str = str.replaceAll('(', '');
-  str = str.replaceAll(')', '');
-  str = str.replaceAll(']', '');
+  str = str.replaceAll(RegExp(r'[\(\)\[\]]'), '');
   List<double> doubles =
       str.split(',').map<double>((st) => double.parse(st)).toList();
-
-  List<Offset> points = doubles.length < 8
-      ? [
-          Offset(doubles[0], doubles[1]),
-          Offset(doubles[2], doubles[3]),
-          Offset(doubles[4], doubles[5]),
-        ]
-      : [
-          Offset(doubles[0], doubles[1]),
-          Offset(doubles[2], doubles[3]),
-          Offset(doubles[4], doubles[5]),
-          Offset(doubles[6], doubles[7]),
-        ];
-
+  List<Offset> points = [];
+  while(doubles.isNotEmpty)
+  {
+    points.add(Offset(doubles[0],doubles[1]));
+    doubles.removeAt(0);
+    doubles.removeAt(0);
+  }
   return points;
 }
 
