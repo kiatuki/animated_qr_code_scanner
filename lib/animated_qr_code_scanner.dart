@@ -105,10 +105,10 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
   QRViewController _controller;
 
   QRViewController get _effectiveController => widget.controller?.controller ?? _controller;
-  set _effectiveController(QRViewController qrViewController)
-  => widget.controller == null 
-  ? _controller = qrViewController
-  : widget.controller.controller = qrViewController;
+  set _effectiveController(QRViewController qrViewController) =>
+    widget.controller == null 
+      ? _controller = qrViewController
+      : widget.controller.controller = qrViewController;
 
   final GlobalKey parentQrKey = GlobalKey();
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
