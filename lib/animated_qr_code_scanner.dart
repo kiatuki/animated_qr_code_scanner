@@ -112,7 +112,6 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
   final GlobalKey parentQrKey = GlobalKey();
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  final GlobalKey interfaceKey = GlobalKey();
   final GlobalKey<AnimatedSquareState> animatedKey = GlobalKey<AnimatedSquareState>();
 
   @override
@@ -303,7 +302,6 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
         qrCornerCenterCropped[i].dy * previewToFlutterRatio.dy + MediaQuery.of(context).padding.top,
       )
     ];
-
     animatedKey.currentState.changeToOffset(qrCornerFlutter);
   }
 
@@ -316,11 +314,9 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
 List<Offset> _parseListPoint(String str) {
   str = str.replaceAll(RegExp(r'[\(\)\[\]]'), '');
-  List<double> doubles =
-      str.split(',').map<double>((st) => double.parse(st)).toList();
+  List<double> doubles = str.split(',').map<double>((st) => double.parse(st)).toList();
   List<Offset> points = [];
-  while(doubles.isNotEmpty)
-  {
+  while(doubles.isNotEmpty) {
     points.add(Offset(doubles[0],doubles[1]));
     doubles.removeAt(0);
     doubles.removeAt(0);
