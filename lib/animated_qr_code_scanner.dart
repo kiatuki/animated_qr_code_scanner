@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as Math;
 
 import 'package:animated_qr_code_scanner/AnimatedQRViewController.dart';
@@ -107,16 +106,10 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
   QRViewController get _effectiveController => widget.controller?.controller ?? _controller;
   set _effectiveController(QRViewController qrViewController)
-  {
-    if(widget.controller != null) {
-      widget.controller.controller = qrViewController;
-    }
-    else {
-      _controller = qrViewController;
-    }
-  }
+  => widget.controller == null 
+  ? _controller = qrViewController
+  : widget.controller.controller = qrViewController;
 
-  /// Keys
   final GlobalKey parentQrKey = GlobalKey();
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   final GlobalKey interfaceKey = GlobalKey();
@@ -130,8 +123,8 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
         Size widgetSize = (parentQrKey.currentContext.findRenderObject() as RenderBox).size;
         viewFinderSize=Size(
-            widgetSize.width,
-            widgetSize.height - MediaQuery.of(context).padding.top,
+          widgetSize.width,
+          widgetSize.height - MediaQuery.of(context).padding.top,
         );
       })
     );
