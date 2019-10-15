@@ -126,6 +126,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
   void initState() {
     previewMirrored = cameraState != _CameraState.front_camera;
     super.initState();
+    // Get widget size after widget has been rendered once, then rebuild it 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
         Size widgetSize = (parentQrKey.currentContext.findRenderObject() as RenderBox).size;
         viewFinderSize=Size(
@@ -143,6 +144,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
     return Container(
       key: parentQrKey,
       child: viewFinderSize != null
+          // Show QRView alongside with animated targetting box with size relative to widget size if we know widget size
           ? Stack(
             children: <Widget>[
               QRView(
@@ -167,6 +169,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
               )
             ],
           )
+          // Show nothing if we don't know widget size yet. Widget size will be gotten after this has been rendered
           : const SizedBox.expand(),
     );
   }
@@ -174,7 +177,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
   void _onQRViewCreated(QRViewController controller) {
     _effectiveController = controller;
 
-    /// Listen to get scanned string
+    // Listen to get scanned string
     controller.scannedStringStream.listen((scannedString) async {
       controller?.pauseCamera();
       animatedKey.currentState.setScanResult(scannedString);
@@ -184,7 +187,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
       });
     });
 
-    /// Listen to detected points' coordinates
+    // Listen to detected points' coordinates
     controller.scannedResultPointsStream.listen((scannedPointsString) async =>
         resultPointsPreviewFramingRect = _parseListPoint(scannedPointsString.toString()));
 
