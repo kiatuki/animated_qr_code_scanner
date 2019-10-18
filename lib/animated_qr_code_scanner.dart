@@ -5,6 +5,7 @@ import 'package:animated_qr_code_scanner/AnimatedSquare.dart';
 import 'package:animated_qr_code_scanner/BitMatrix.dart';
 import 'package:animated_qr_code_scanner/Detector.dart';
 import 'package:animated_qr_code_scanner/PerspectiveTransform.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -23,10 +24,12 @@ class AnimatedQRView extends StatefulWidget {
 
   /// Callback function whenever the scanner found a QR.
   /// Called AFTER the targetting square has finished moving to the detected code
+  /// On iOS, will be called immediately when detected since animation on iOS is unavailble yet
   final Function(String string) onScan;
 
   /// Callback function whenever the scanner found a QR.
   /// Called BEFORE the targetting square has finished moving to the detected code
+  /// Currently WILL NOT BE CALLED ON IOS. [onScan] Will be called instead
   final Function(String string) onScanBeforeAnimation;
 
   /// Controller for developers
@@ -143,22 +146,26 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
                 key: qrKey,
                 onQRViewCreated: _onQRViewCreated,
               ),
-              SizedBox(
-                width: viewFinderSize.width,
-                height: viewFinderSize.height,
-                child: AnimatedSquare(
-                  widgetSize: viewFinderSize,
-                  padding: MediaQuery.of(context).padding,
-                  key: animatedKey,
-                  width: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
-                  height: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
-                  onScan: widget.onScan,
-                  animationDuration: widget.animationDuration,
-                  squareBorderColor: widget.squareBorderColor,
-                  squareColor : widget.squareColor,
-                  borderWidth: widget.borderWidth,
-                ),
-              ),
+              defaultTargetPlatform == TargetPlatform.android
+                // Display animated square for android
+                ? SizedBox(
+                  width: viewFinderSize.width,
+                  height: viewFinderSize.height,
+                  child: AnimatedSquare(
+                    widgetSize: viewFinderSize,
+                    padding: MediaQuery.of(context).padding,
+                    key: animatedKey,
+                    width: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
+                    height: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
+                    onScan: widget.onScan,
+                    animationDuration: widget.animationDuration,
+                    squareBorderColor: widget.squareBorderColor,
+                    squareColor : widget.squareColor,
+                    borderWidth: widget.borderWidth,
+                  ),
+                )
+                // Can't display animated square yet for iOS
+                : const SizedBox.shrink(),
             ],
           )
           // Show nothing if we don't know widget size yet. Widget size will be gotten after this has been rendered
@@ -175,8 +182,14 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
       animatedKey.currentState.setScanResult(scannedString);
       setState(() {
         qrText = scannedString;
-        widget?.onScanBeforeAnimation(scannedString);
+        if(defaultTargetPlatform == TargetPlatform.android) widget?.onScanBeforeAnimation(scannedString);
       });
+      if(defaultTargetPlatform == TargetPlatform.iOS)
+      {
+        setState(() {
+          widget?.onScan(scannedString);
+        });
+      }
     });
 
     // Listen to detected points' coordinates
@@ -216,7 +229,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
     controller.bitMatrixStream.listen((binarizedCroppedImage) async {
       detector.bitMatrix = BitMatrix.fromString(binarizedCroppedImage);
-      startHighlightQR();
+      if(defaultTargetPlatform == TargetPlatform.android) startHighlightQR();
     });
 
     controller.animatedSquareStream.listen((strCommand) async {
