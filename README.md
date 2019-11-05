@@ -15,6 +15,19 @@ It is also possible to style the targetting box.
 ## Demo
 
 ![Animation Demo](https://raw.githubusercontent.com/kiatuki/animated_qr_code_scanner/master/docs/images/demo.gif)
+
+## Setup
+
+Modify the app-level build.gradle (\android\app\build.gradle) and modify the minSdkVersion to at least 24
+
+```dart
+defaultConfig {
+    ...
+    minSdkVersion 24
+    ...
+}
+```
+
 ## Installing
 
 Use this package as a library
@@ -26,7 +39,7 @@ dependencies:
   animated_qr_code_scanner:
     git:
       url: https://github.com/kiatuki/animated_qr_code_scanner.git
-      ref: v0.1.3
+      ref: v0.1.5
 ```
 
 ### 2. Install it
