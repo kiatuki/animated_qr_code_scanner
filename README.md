@@ -18,7 +18,15 @@ It is also possible to style the targetting box.
 
 ## Setup
 
-Modify the app-level build.gradle (\android\app\build.gradle) and modify the minSdkVersion to at least 24
+Modify the android-level build.gradle (\android\build.gradle) gradle to 3.3.1
+```dart
+dependencies {
+    classpath 'com.android.tools.build:gradle:3.3.1'
+    ...
+}
+```
+
+Modify the app-level build.gradle (\android\app\build.gradle) minSdkVersion to at least 24
 
 ```dart
 defaultConfig {
@@ -39,7 +47,7 @@ dependencies:
   animated_qr_code_scanner:
     git:
       url: https://github.com/kiatuki/animated_qr_code_scanner.git
-      ref: v0.1.5
+      ref: v0.1.6
 ```
 
 ### 2. Install it
