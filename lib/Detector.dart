@@ -36,7 +36,7 @@ class Detector {
                                        Offset bottomLeft,
                                        Offset alignmentPattern,) {
     computedDimension = computeDimension(topLeft, topRight, bottomLeft, calculateModuleSize(topLeft, topRight, bottomLeft));
-    double dimMinusThree = computedDimension - 3.5;
+    final double dimMinusThree = computedDimension - 3.5;
     double bottomRightX;
     double bottomRightY;
     double sourceBottomRightX;
@@ -119,7 +119,7 @@ class Detector {
                                        Offset bottomLeft,
                                        Offset alignmentPattern,) {
     computedDimension = computeDimension(topLeft, topRight, bottomLeft, calculateModuleSize(topLeft, topRight, bottomLeft));
-    double dimMinusThree = computedDimension - 3.5;
+    final double dimMinusThree = computedDimension - 3.5;
     double bottomRightX;
     double bottomRightY;
     double sourceBottomRightX;
@@ -162,8 +162,8 @@ class Detector {
                                       Offset topRight,
                                       Offset bottomLeft,
                                       double moduleSize) {
-    int tltrCentersDimension = ((topLeft - topRight).distance ~/ moduleSize);
-    int tlblCentersDimension = ((topLeft - bottomLeft).distance ~/ moduleSize);
+    final int tltrCentersDimension = (topLeft - topRight).distance ~/ moduleSize;
+    final int tlblCentersDimension = (topLeft - bottomLeft).distance ~/ moduleSize;
     int dimension = ((tltrCentersDimension + tlblCentersDimension) ~/ 2) + 7;
     switch (dimension % 4) { // mod 4
       case 0:
@@ -199,11 +199,11 @@ class Detector {
   /// {@link #sizeOfBlackWhiteBlackRunBothWays(int, int, int, int)} to figure the
   /// width of each, measuring along the axis between their centers.</p>
   double calculateModuleSizeOneWay(Offset pattern, Offset otherPattern) {
-    double moduleSizeEst1 = sizeOfBlackWhiteBlackRunBothWays( pattern.dx.toInt(),
+    final double moduleSizeEst1 = sizeOfBlackWhiteBlackRunBothWays( pattern.dx.toInt(),
         pattern.dy.toInt(),
         otherPattern.dx.toInt(),
         otherPattern.dy.toInt());
-    double moduleSizeEst2 = sizeOfBlackWhiteBlackRunBothWays(otherPattern.dx.toInt(),
+    final double moduleSizeEst2 = sizeOfBlackWhiteBlackRunBothWays(otherPattern.dx.toInt(),
         otherPattern.dy.toInt(),
         pattern.dx.toInt(),
         pattern.dy.toInt());
@@ -262,7 +262,7 @@ class Detector {
   double sizeOfBlackWhiteBlackRun(int fromX, int fromY, int toX, int toY) {
     // Mild variant of Bresenham's algorithm;
     // see http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-    bool steep = (toY - fromY).abs() > (toX - fromX).abs();
+    final bool steep = (toY - fromY).abs() > (toX - fromX).abs();
     if (steep) {
       int temp = fromX;
       fromX = fromY;
@@ -272,19 +272,19 @@ class Detector {
       toY = temp;
     }
 
-    int dx = (toX - fromX).abs();
-    int dy = (toY - fromY).abs();
+    final int dx = (toX - fromX).abs();
+    final int dy = (toY - fromY).abs();
     int error = -dx ~/ 2;
-    int xstep = fromX < toX ? 1 : -1;
-    int ystep = fromY < toY ? 1 : -1;
+    final int xstep = fromX < toX ? 1 : -1;
+    final int ystep = fromY < toY ? 1 : -1;
 
     // In black pixels, looking for white, first or second time.
     int state = 0;
     // Loop up until x == toX, but not beyond
-    int xLimit = toX + xstep;
+    final int xLimit = toX + xstep;
     for (int x = fromX, y = fromY; x != xLimit; x += xstep) {
-      int realX = steep ? y : x;
-      int realY = steep ? x : y;
+      final int realX = steep ? y : x;
+      final int realY = steep ? x : y;
 
       // Does current pixel mean we have moved white to black or vice versa?
       // Scanning black in state 0,2 and white in state 1, so if we find the wrong

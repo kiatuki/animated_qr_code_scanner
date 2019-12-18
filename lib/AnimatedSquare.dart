@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AnimatedSquare extends StatefulWidget {
-  AnimatedSquare({
+  const AnimatedSquare ({
     this.width,
     this.height,
     this.widgetSize,
@@ -28,9 +28,9 @@ class AnimatedSquare extends StatefulWidget {
 
 class AnimatedSquareState extends State<AnimatedSquare>
     with TickerProviderStateMixin {
-  double _fraction = 0.0;
-  List<Offset> from = List<Offset>();
-  List<Offset> to = List<Offset>();
+  final double _fraction = 0.0;
+  final List<Offset> from = [];
+  final List<Offset> to = [];
   List<Offset> offsets;
   List<Animation<Offset>> animations;
   AnimationController controller;
@@ -45,13 +45,14 @@ class AnimatedSquareState extends State<AnimatedSquare>
 
   void changeToOffset(List<Offset> newOffset) {
     setState(() {
-      to = newOffset;
+      to.clear();
+      to.addAll(newOffset);
       controller.stop();
       controller.duration = widget.animationDuration ?? controller.duration;
-      animations.forEach((c) => c.removeStatusListener(_statusListenerIdle));
+      for(Animation<Offset> animation in animations) animation.removeStatusListener(_statusListenerIdle);
       animations = newOffset.map((offset) {
-        int i = newOffset.indexOf(offset);
-        Offset fromOffset = offsets[i];
+        final int i = newOffset.indexOf(offset);
+        final Offset fromOffset = offsets[i];
         return Tween<Offset>(
           begin: fromOffset,
           end: offset,
@@ -66,12 +67,12 @@ class AnimatedSquareState extends State<AnimatedSquare>
   void onRescan() => revertOffset().whenComplete(() => initAnimation());
 
   TickerFuture revertOffset() {
-    double left = (widget.widgetSize.width - widget.width) / 2;
-    double top = (widget.widgetSize.height - widget.height) / 2 + widget.padding.top;
-    double right = (widget.widgetSize.width - widget.width) / 2 + widget.width;
-    double bottom = (widget.widgetSize.height - widget.height) / 2 + widget.height + widget.padding.top;
+    final double left = (widget.widgetSize.width - widget.width) / 2;
+    final double top = (widget.widgetSize.height - widget.height) / 2 + widget.padding.top;
+    final double right = (widget.widgetSize.width - widget.width) / 2 + widget.width;
+    final double bottom = (widget.widgetSize.height - widget.height) / 2 + widget.height + widget.padding.top;
 
-    List<Offset> newOffset = [
+    final List<Offset> newOffset = [
       Offset(left, top),
       Offset(right, top),
       Offset(right, bottom),
@@ -80,10 +81,10 @@ class AnimatedSquareState extends State<AnimatedSquare>
     setState(() {
       controller.stop();
       controller.duration = const Duration(milliseconds: 1000);
-      animations.forEach((c) => c.removeStatusListener(_statusListenerIdle));
+      for(Animation<Offset> animation in animations) animation.removeStatusListener(_statusListenerIdle);
       animations = newOffset.map((offset) {
-        int i = newOffset.indexOf(offset);
-        Offset fromOffset = offsets[i];
+        final int i = newOffset.indexOf(offset);
+        final Offset fromOffset = offsets[i];
         return Tween<Offset>(
           begin: fromOffset,
           end: offset,
@@ -94,18 +95,19 @@ class AnimatedSquareState extends State<AnimatedSquare>
   }
 
   void initAnimation() {
-    final double tween = 0.9;
+    const double tween = 0.9;
     double left = (widget.widgetSize.width - widget.width) / 2;
     double top = ((widget.widgetSize.height - widget.height) / 2) + widget.padding.top;
     double right = (widget.widgetSize.width - widget.width) / 2 + widget.width;
     double bottom = (widget.widgetSize.height - widget.height) / 2 + widget.height + widget.padding.top;
 
-    from = [
+    from.clear();
+    from.addAll([
       Offset(left, top),
       Offset(right, top),
       Offset(right, bottom),
       Offset(left, bottom)
-    ];
+    ]);
     offsets = from;
 
     right = (widget.widgetSize.width - widget.width) / 2 + widget.width * tween;
@@ -113,18 +115,19 @@ class AnimatedSquareState extends State<AnimatedSquare>
     left = (widget.widgetSize.width - widget.width) / 2 + widget.width * (1 - tween);
     top = (widget.widgetSize.height - widget.height) / 2 + widget.height * (1 - tween) + widget.padding.top;
 
-    to = [
+    to.clear();
+    to.addAll([
       Offset(left, top),
       Offset(right, top),
       Offset(right, bottom),
       Offset(left, bottom)
-    ];
+    ]);
 
     controller = AnimationController(duration: const Duration(milliseconds: 1000), vsync: this);
     curved = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
     animations = from.map((offset) {
-      int i = from.indexOf(offset);
-      Offset toOffset = to[i];
+      final int i = from.indexOf(offset);
+      final Offset toOffset = to[i];
       return Tween<Offset>(
         begin: offset,
         end: toOffset,
@@ -172,19 +175,19 @@ class AnimatedSquareState extends State<AnimatedSquare>
 }
 
 class _SquarePainter extends CustomPainter {
+  const _SquarePainter({this.points, this.color, this.borderColor, this.borderWidth, this.tween});
+
   final List<Offset> points;
   final double tween;
   final Color borderColor;
   final Color color;
   final double borderWidth;
 
-  _SquarePainter({this.points, this.color, this.borderColor, this.borderWidth, this.tween});
-
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawPath(Path()..addPolygon(points ?? [], true),
         Paint()..color = color);
-    Paint _paint = Paint()
+    final Paint _paint = Paint()
       ..color = borderColor
       ..strokeWidth = borderWidth
       ..strokeCap = StrokeCap.round;

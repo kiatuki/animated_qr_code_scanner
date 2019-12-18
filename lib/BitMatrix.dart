@@ -30,11 +30,6 @@
 /// @author Sean Owen
 /// @author dswitkin@google.com (Daniel Switkin)
 class BitMatrix {
-
-  final int width;
-  final int height;
-  List<bool> bits;
-
   /// Creates an empty square {@code BitMatrix}.
   ///
   /// @param dimension height and width
@@ -42,6 +37,30 @@ class BitMatrix {
     this.width,
     this.height,
   }){clear();}
+
+  BitMatrix.fromString(String string):
+    width = string.indexOf('\n'),
+    height = '\n'.allMatches(string).length
+  {
+    clear();
+    for(int i=0,j=0;i<string.length;i++)
+    {
+      if(string[i]=='1'){
+        final int x = j%width;
+        final int y = j~/width;
+        set(x,y);
+        j++;
+      }
+      else if(string[i]=='0'){
+        j++;
+      }
+    }
+  }
+  
+  final int width;
+  final int height;
+  List<bool> bits;
+
 
   /// <p>Gets the requested bit, where true means black.</p>
   ///
@@ -71,24 +90,5 @@ class BitMatrix {
 
   /// Clears all bits (sets to false).
   void clear() => bits = [for(int i=0;i<width*height;i++) false];
-
-  BitMatrix.fromString(String string):
-    width = string.indexOf('\n'),
-    height = '\n'.allMatches(string).length
-  {
-    clear();
-    for(int i=0,j=0;i<string.length;i++)
-    {
-      if(string[i]=='1'){
-        int x = j%width;
-        int y = j~/width;
-        set(x,y);
-        j++;
-      }
-      else if(string[i]=='0'){
-        j++;
-      }
-    }
-  }
 
 }

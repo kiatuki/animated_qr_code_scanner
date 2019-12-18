@@ -1,4 +1,4 @@
-import 'dart:math' as Math;
+import 'dart:math' as math;
 
 import 'package:animated_qr_code_scanner/AnimatedQRViewController.dart';
 import 'package:animated_qr_code_scanner/AnimatedSquare.dart';
@@ -60,7 +60,7 @@ class AnimatedQRView extends StatefulWidget {
 
 class _AnimatedQRViewState extends State<AnimatedQRView> {
   /// The decoded text contained within the detected QR Code
-  String qrText = "";
+  String qrText = '';
 
   /// Coordinates of corners of detected QR code relative to the targetting square.
   /// Top-left of square is (0,0). QRs will only become detected when inside the square
@@ -123,7 +123,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
     super.initState();
     // Get widget size after widget has been rendered once, then rebuild it 
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
-        Size widgetSize = (parentQrKey.currentContext.findRenderObject() as RenderBox).size;
+        final Size widgetSize = (parentQrKey.currentContext.findRenderObject() as RenderBox).size;
         viewFinderSize=Size(
           widgetSize.width,
           widgetSize.height - MediaQuery.of(context).padding.top,
@@ -146,26 +146,22 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
                 key: qrKey,
                 onQRViewCreated: _onQRViewCreated,
               ),
-              defaultTargetPlatform == TargetPlatform.android
-                // Display animated square for android
-                ? SizedBox(
+              if (defaultTargetPlatform == TargetPlatform.android) SizedBox(
                   width: viewFinderSize.width,
                   height: viewFinderSize.height,
                   child: AnimatedSquare(
                     widgetSize: viewFinderSize,
                     padding: MediaQuery.of(context).padding,
                     key: animatedKey,
-                    width: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
-                    height: Math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
+                    width: math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
+                    height: math.min<double>(viewFinderSize.height,viewFinderSize.width)*0.8,
                     onScan: widget.onScan,
                     animationDuration: widget.animationDuration,
                     squareBorderColor: widget.squareBorderColor,
                     squareColor : widget.squareColor,
                     borderWidth: widget.borderWidth,
                   ),
-                )
-                // Can't display animated square yet for iOS
-                : const SizedBox.shrink(),
+                ) else const SizedBox.shrink(),
             ],
           )
           // Show nothing if we don't know widget size yet. Widget size will be gotten after this has been rendered
@@ -198,7 +194,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
     controller.viewfinderRectStream.listen((viewfinderRectString) async {
       print('Viewfinder Rect : $viewfinderRectString');
-      List<String> rectLstStr = viewfinderRectString.split(' ');
+      final List<String> rectLstStr = viewfinderRectString.split(' ');
       viewfinderRect = Rect.fromLTRB(
         double.parse(rectLstStr[0]),
         double.parse(rectLstStr[1]),
@@ -209,7 +205,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
     controller.previewFramingRectStream.listen((previewFramingRectString) async {
       print('Preview Framing Rect : $previewFramingRectString');
-      List<String> rectLstStr = previewFramingRectString.split(' ');
+      final List<String> rectLstStr = previewFramingRectString.split(' ');
       previewFramingRect = Rect.fromLTRB(
         double.parse(rectLstStr[0]),
         double.parse(rectLstStr[1]),
@@ -220,7 +216,7 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
     controller.previewSizeStream.listen((previewSizeString) async {
       print('Preview Size : $previewSizeString');
-      List<String> rectLstStr = previewSizeString.split('x');
+      final List<String> rectLstStr = previewSizeString.split('x');
       previewSize = Size(
         double.parse(rectLstStr[0]),
         double.parse(rectLstStr[1]),
@@ -233,11 +229,11 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
     });
 
     controller.animatedSquareStream.listen((strCommand) async {
-      if(strCommand == "flip" || strCommand == "resume") {
+      if(strCommand == 'flip' || strCommand == 'resume') {
         animatedKey.currentState.onRescan();
         animatedKey.currentState.controller.animateTo(1);
       }
-      if(strCommand == "pause") animatedKey.currentState.controller.stop();
+      if(strCommand == 'pause') animatedKey.currentState.controller.stop();
     });
   }
 
@@ -246,26 +242,25 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
   /// [previewSize], and [detector.bitMatrix] is known
   void startHighlightQR()
   {
-    PerspectiveTransform transform = detector.createTransform(
+    final PerspectiveTransform transform = detector.createTransform(
       resultPointsPreviewFramingRect[1],
       resultPointsPreviewFramingRect[2],
       resultPointsPreviewFramingRect[0],
       resultPointsPreviewFramingRect.length >= 4 ? resultPointsPreviewFramingRect[3] : null);
 
     qrCornersPreviewFramingRect = transform.transformPointsFromOffset([
-      Offset(0, 0),
+      const Offset(0, 0),
       Offset(detector.computedDimension.toDouble(), 0),
       Offset(detector.computedDimension.toDouble(), detector.computedDimension.toDouble()),
       Offset(0, detector.computedDimension.toDouble()),
     ]);
     
     Offset translateResultPointFramingRectToPreview(Offset point) {
-      double x = point.dx + this.previewFramingRect.left;
-      double y = point.dy + this.previewFramingRect.top;
-      if (previewMirrored) {
-        x = previewSize.width/2 - x; // TODO: incorrect
-      }
-      return new Offset(x, y);
+      final double x = previewMirrored
+      ? previewSize.width/2 - (point.dx + previewFramingRect.left) // TODO: incorrect
+      : point.dx + previewFramingRect.left;
+      final double y = point.dy + previewFramingRect.top;
+      return Offset(x, y);
     }
 
     qrCornersPreview = [
@@ -275,18 +270,18 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
         )
     ];
 
-    Size scaledSize = Size(viewfinderRect.right-viewfinderRect.left,viewfinderRect.bottom-viewfinderRect.top);
-    Offset previewCenter = Offset(previewSize.width/2,previewSize.height/2);
-    Offset scaledCenter = Offset(scaledSize.width/2,scaledSize.height/2);
+    final Size scaledSize = Size(viewfinderRect.right-viewfinderRect.left,viewfinderRect.bottom-viewfinderRect.top);
+    final Offset previewCenter = Offset(previewSize.width/2,previewSize.height/2);
+    final Offset scaledCenter = Offset(scaledSize.width/2,scaledSize.height/2);
 
-    List<Offset> qrCornerScaled = [
+    final List<Offset> qrCornerScaled = [
       for(int i = 0; i < qrCornersPreview.length; i++) Offset(
         ((qrCornersPreview[i].dx-previewCenter.dx)*scaledSize.width/previewSize.width)+scaledCenter.dx,
         ((qrCornersPreview[i].dy-previewCenter.dy)*scaledSize.height/previewSize.height)+scaledCenter.dy,
       )
     ];
 
-    Size centerCroppedSize =
+    final Size centerCroppedSize =
       previewSize.width/previewSize.height < viewFinderSize.width/viewFinderSize.height
         ? Size(
           scaledSize.width,
@@ -297,14 +292,14 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
           scaledSize.height,
         );
 
-    List<Offset> qrCornerCenterCropped = [
+    final List<Offset> qrCornerCenterCropped = [
       for(int i=0; i < qrCornerScaled.length; i++) Offset(
         qrCornerScaled[i].dx-(scaledSize.width-centerCroppedSize.width)/2,
         qrCornerScaled[i].dy-(scaledSize.height-centerCroppedSize.height)/2,
       )
     ];
 
-    Offset previewToFlutterRatio = Offset(
+    final Offset previewToFlutterRatio = Offset(
       viewFinderSize.width/centerCroppedSize.width,
       viewFinderSize.height/centerCroppedSize.height,
     );
@@ -327,8 +322,8 @@ class _AnimatedQRViewState extends State<AnimatedQRView> {
 
 List<Offset> _parseListPoint(String str) {
   str = str.replaceAll(RegExp(r'[\(\)\[\]]'), '');
-  List<double> doubles = str.split(',').map<double>((st) => double.parse(st)).toList();
-  List<Offset> points = [];
+  final List<double> doubles = str.split(',').map<double>((st) => double.parse(st)).toList();
+  final List<Offset> points = [];
   while(doubles.isNotEmpty) {
     points.add(Offset(doubles[0],doubles[1]));
     doubles.removeAt(0);

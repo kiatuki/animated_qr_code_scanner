@@ -33,10 +33,10 @@ class TestPage extends StatelessWidget {
                 await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text("Callback at the end of animation: $str"),
+                    title: Text('Callback at the end of animation: $str'),
                     actions: [
                       FlatButton(
-                        child: Text('OK'),
+                        child: const Text('OK'),
                         onPressed: () {
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
@@ -45,7 +45,7 @@ class TestPage extends StatelessWidget {
                               builder: (context) => Scaffold(
                                 body: Align(
                                   alignment: Alignment.center,
-                                  child: Text("$str"),
+                                  child: Text('$str'),
                                 ),
                               ),
                             ),
@@ -53,7 +53,7 @@ class TestPage extends StatelessWidget {
                         },
                       ),
                       FlatButton(
-                        child: Text('Rescan'),
+                        child: const Text('Rescan'),
                         onPressed: () {
                           Navigator.of(context).pop();
                           controller.resume();
@@ -72,7 +72,7 @@ class TestPage extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   color: Colors.blue,
-                  child: Text('Flash'),
+                  child: const Text('Flash'),
                   onPressed: () {
                     controller.toggleFlash();
                   },
@@ -80,7 +80,7 @@ class TestPage extends StatelessWidget {
                 const SizedBox(width: 10),
                 FlatButton(
                   color: Colors.blue,
-                  child: Text('Flip'),
+                  child: const Text('Flip'),
                   onPressed: () {
                     controller.flipCamera();
                   },
@@ -88,7 +88,7 @@ class TestPage extends StatelessWidget {
                 const SizedBox(width: 10),
                 FlatButton(
                   color: Colors.blue,
-                  child: Text('Resume'),
+                  child: const Text('Resume'),
                   onPressed: () {
                     controller.resume();
                   },
