@@ -117,7 +117,7 @@ class TestPage extends StatelessWidget {
                         child: Text('Rescan'),
                         onPressed: () {
                           Navigator.of(context).pop();
-                          controller.resumeCamera();
+                          controller.resume();
                         },
                       ),
                     ],
@@ -151,7 +151,7 @@ class TestPage extends StatelessWidget {
                   color: Colors.blue,
                   child: Text('Resume'),
                   onPressed: () {
-                    controller.resumeCamera();
+                    controller.resume();
                   },
                 ),
               ],
