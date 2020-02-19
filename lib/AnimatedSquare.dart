@@ -154,6 +154,12 @@ class AnimatedSquareState extends State<AnimatedSquare>
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Container(
     color: Colors.transparent,
     child: CustomPaint(
