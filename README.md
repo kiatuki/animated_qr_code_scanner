@@ -47,7 +47,7 @@ dependencies:
   animated_qr_code_scanner:
     git:
       url: https://github.com/kiatuki/animated_qr_code_scanner.git
-      ref: v0.1.6
+      ref: v0.1.7
 ```
 
 ### 2. Install it
